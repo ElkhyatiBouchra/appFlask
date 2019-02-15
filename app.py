@@ -42,19 +42,16 @@ def index():
 @app.route('/login',methods=['GET','POST'])
 def login():
     form = LoginForm()
+    msg_err=" "
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        name = user.username
         if user:
             if user.password == form.password.data:
                 return render_template("dashboard.html",user = user)
+        else :
+            msg_err="incorrect user name or password"        
+    return render_template('login.html',form=form,msg_err=msg_err)
 
-
-        return '<1>invalid username or password</h1>'
-
-        #return '<h1>' + form.username.data + ' '+ form.password.data +'</h1>'
-
-    return render_template('login.html',form=form)  
 @app.route('/signup',methods=['GET','POST']) 
 def signup():
     form = RegisterForm()
@@ -64,8 +61,8 @@ def signup():
         db.session.commit()
         return '<h1> New user has b een created! </h1>'
         #return '<h1>' + form.username.data + ' '+form.email.data+' '+ form.password.data +'</h1>'
-
     return render_template('signup.html',form=form) 
+    
 @app.route('/dashboard')  
 
 def dashboard():
