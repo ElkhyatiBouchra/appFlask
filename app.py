@@ -10,17 +10,19 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField , BooleanField
 from wtforms.validators import InputRequired ,Email , Length
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash , check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Thisissupposedtobesecrpet'
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:////Users/Elkhyati bouchra/Documents/appFlask/database.db'
 Bootstrap(app)  
 db = SQLAlchemy(app)
-from model import User , LoginForm ,RegisterForm
+from model import User 
+from forms import LoginForm ,RegisterForm
 
 
 
- #### mapping   
+ #### routes  
     
 @app.route('/')
 def index():
@@ -35,7 +37,7 @@ def login():
             if user.password == form.password.data:
                 return render_template("dashboard.html",user = user)
         else :
-            msg_err="incorrect user name or password"        
+            msg_err="Invalid username or password"        
     return render_template('login.html',form=form,msg_err=msg_err)
 
 @app.route('/signup',methods=['GET','POST']) 
@@ -46,7 +48,6 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
         return '<h1> New user has b een created! </h1>'
-        #return '<h1>' + form.username.data + ' '+form.email.data+' '+ form.password.data +'</h1>'
     return render_template('signup.html',form=form) 
     
 @app.route('/dashboard')  
